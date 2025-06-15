@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - Your Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-text: #666;
+            --card-title: #333;
+            --footer-bg: #333;
+            --footer-text: rgb(255, 253, 253);
+            --nav-bg: rgb(8, 238, 207);
+            --nav-text: white;
+            --input-bg: white;
+            --input-border: #ddd;
+            --input-text: #333;
+            --button-bg: rgb(8, 238, 207);
+            --button-text: white;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0a1a;
+            --text-color: #e0e0e0;
+            --card-bg: rgba(26, 26, 46, 0.95);
+            --card-text: rgba(255, 255, 255, 0.7);
+            --card-title: #fff;
+            --footer-bg: #0a0a1a;
+            --footer-text: #e0e0e0;
+            --nav-bg: #0a0a1a;
+            --nav-text: rgb(8, 238, 207);
+            --input-bg: #1a1a2e;
+            --input-border: #333;
+            --input-text: #e0e0e0;
+            --button-bg: rgb(8, 238, 207);
+            --button-text: #0a0a1a;
+        }
+
+        body {
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Theme Toggle Button Styles */
+        .theme-toggle {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle .sun,
+        .theme-toggle .moon {
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle .sun {
+            font-size: 24px;
+        }
+
+        .theme-toggle .moon {
+            font-size: 22px;
+            opacity: 0;
+            transform: scale(0.5) rotate(-90deg);
+        }
+
+        .theme-toggle.clicked {
+            animation: clickEffect 0.5s ease;
+        }
+
+        @keyframes clickEffect {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        /* Navigation */
+        nav {
+            background-color: rgb(20, 20, 20);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            background: none;
+            padding: 5px;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+            display: block;
+            filter: brightness(1.2) contrast(1.1);
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: rgb(8, 238, 207);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+        }
+
+        /* Auth Container */
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .auth-tab.active {
+            color: rgb(8, 238, 207);
+            border-bottom: 2px solid rgb(8, 238, 207);
+            margin-bottom: -2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: rgb(8, 238, 207);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: rgb(8, 238, 207);
+            color: rgb(20, 20, 20);
+            border: 2px solid rgb(8, 238, 207);
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: transparent;
+            color: rgb(8, 238, 207);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .back-to-home {
+            display: inline-block;
+            margin-top: 1rem;
+            color: rgb(8, 238, 207);
+            text-decoration: none;
+        }
+
+        .back-to-home:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 80px 1rem 2rem;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Add these mobile styles */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+                background: none;
+                border: none;
+                color: var(--nav-text);
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: var(--nav-bg);
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 0.5rem 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .auth-container {
+                margin: 80px 1rem 2rem;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Progress Tracking card specific styles */
+        a.feature-card[href="progress.html"] {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a.feature-card[href="progress.html"] .feature-icon {
+            background: linear-gradient(135deg, rgb(8, 238, 207) 0%, #06f9d5 100%);
+        }
+
+        a.feature-card[href="progress.html"]:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.15);
+            border-color: rgba(8, 238, 207, 0.3);
+        }
+
+        /* Dark mode specific styles for progress tracking feature */
+        [data-theme="dark"] a.feature-card[href="progress.html"] {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] a.feature-card[href="progress.html"]:hover {
+            border-color: rgba(8, 238, 207, 0.4);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.1);
+        }
+
+        /* Add these styles to progress.html */
+        .auth-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: rgb(8, 238, 207) !important;
+            color: rgb(20, 20, 20) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid rgb(8, 238, 207) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            text-decoration: none;
+        }
+
+        .auth-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+        }
+
+        .auth-btn img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        /* Dark mode button styles */
+        [data-theme="dark"] .auth-btn {
+            color: rgb(20, 20, 20) !important;
+        }
+
+        [data-theme="dark"] .auth-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="./index.html" class="logo">
+                <img src="Doubt-Photoroom.png" alt="Doubt Quiz Logo">
+            </a>
+            <div class="nav-links">
+                <a href="./index.html">Home</a>
+                <a href="./about.html">About</a>
+                <a href="./notes.html">Notes</a>
+                <a href="./authentication.html" class="active">Sign In</a>
+                <button id="theme-toggle" class="theme-toggle">
+                    <span class="sun">☀️</span>
+                    <span class="moon">🌙</span>
+                </button>
+            </div>
+            <button class="mobile-menu-btn">☰</button>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-tabs">
+            <div class="auth-tab active" onclick="switchTab('signIn')">Sign In</div>
+            <div class="auth-tab" onclick="switchTab('signUp')">Sign Up</div>
+        </div>
+
+        <!-- Sign In Form -->
+        <form id="signInForm" class="auth-form active" onsubmit="handleSignIn(event)">
+            <div class="form-group">
+                <label for="signInEmail">Email</label>
+                <input type="email" id="signInEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="signInPassword">Password</label>
+                <input type="password" id="signInPassword" required>
+            </div>
+            <button type="submit" class="submit-btn">Sign In</button>
+        </form>
+
+        <!-- Sign Up Form -->
+        <form id="signUpForm" class="auth-form" onsubmit="handleSignUp(event)">
+            <div class="form-group">
+                <label for="signUpName">Full Name</label>
+                <input type="text" id="signUpName" required>
+            </div>
+            <div class="form-group">
+                <label for="signUpEmail">Email</label>
+                <input type="email" id="signUpEmail" required>
+            </div>
+            <div class="form-group">
+                <label for="signUpPassword">Password</label>
+                <input type="password" id="signUpPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" required>
+            </div>
+            <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+
+        <a href="index.html" class="back-to-home">← Back to Home</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Your Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function switchTab(tab) {
+            // Update tabs
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update forms
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            if (tab === 'signIn') {
+                document.getElementById('signInForm').classList.add('active');
+            } else {
+                document.getElementById('signUpForm').classList.add('active');
+            }
+        }
+
+        function handleSignIn(event) {
+            event.preventDefault();
+            const submitBtn = event.target.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+
+            const email = document.getElementById('signInEmail').value;
+            const password = document.getElementById('signInPassword').value;
+
+            try {
+                fetch('process.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        email: email,
+                        password: password
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = './index.html';
+                    } else {
+                        alert(data.message || 'Login failed. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Login failed. Please try again.');
+                })
+                .finally(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Sign In';
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        }
+
+        function handleSignUp(event) {
+            event.preventDefault();
+            const name = document.getElementById('signUpName').value;
+            const email = document.getElementById('signUpEmail').value;
+            const password = document.getElementById('signUpPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Basic validation
+            if (!name || !email || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = event.target.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing up...';
+
+            // Make API call to register user
+            fetch('process.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'register',
+                    name: name,
+                    email: email,
+                    password: password,
+                    contactNumber: '1234567890' // Default contact number
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.message || 'Registration failed');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Registration response:', data);
+                if (data.message === 'User registered successfully') {
+                    alert('Registration successful! Please sign in.');
+                    switchTab('signIn');
+                } else {
+                    alert(data.message || 'Registration failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Registration error:', error);
+                alert(error.message || 'Registration failed. Please try again.');
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign Up';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const navLinks = document.querySelector('.nav-links');
+
+            if (mobileMenuBtn && navLinks) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    navLinks.classList.toggle('active');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                        navLinks.classList.remove('active');
+                    }
+                });
+            }
+        });
+
+        // Add theme switcher functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const sunIcon = themeToggle.querySelector('.sun');
+            const moonIcon = themeToggle.querySelector('.moon');
+
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                updateThemeIcons(savedTheme === 'dark');
+            }
+
+            themeToggle.addEventListener('click', () => {
+                themeToggle.classList.add('clicked');
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                
+                // Toggle theme
+                const newTheme = isDark ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update icons
+                updateThemeIcons(!isDark);
+
+                // Remove animation class
+                setTimeout(() => {
+                    themeToggle.classList.remove('clicked');
+                }, 500);
+            });
+
+            function updateThemeIcons(isDark) {
+                if (isDark) {
+                    sunIcon.style.opacity = '0';
+                    sunIcon.style.transform = 'scale(0.5) rotate(90deg)';
+                    moonIcon.style.opacity = '1';
+                    moonIcon.style.transform = 'scale(1) rotate(0)';
+                } else {
+                    sunIcon.style.opacity = '1';
+                    sunIcon.style.transform = 'scale(1) rotate(0)';
+                    moonIcon.style.opacity = '0';
+                    moonIcon.style.transform = 'scale(0.5) rotate(-90deg)';
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

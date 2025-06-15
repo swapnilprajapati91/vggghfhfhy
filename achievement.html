@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Achievements</title>
+    <style>
+        :root {
+            --primary-color: rgb(8, 238, 207);
+            --bg-color: #1a1a2e;
+            --text-color: #fff;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --hover-color: rgba(8, 238, 207, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-color) 0%, #16213e 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            padding-top: 80px;
+        }
+
+        /* Navigation Styles */
+        nav {
+            background-color: rgb(20, 20, 20);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 45px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), #06f9d5);
+            color: rgb(20, 20, 20);
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .achievement-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(8, 238, 207, 0.2);
+        }
+
+        .achievement-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .rank-icon {
+            font-size: 2rem;
+        }
+
+        .achievement-title {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
+        .achievement-details {
+            margin-top: 1rem;
+        }
+
+        .achievement-progress {
+            margin-top: 1rem;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .achievement-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --text-color: #1a1a2e;
+            --card-bg: rgb(252, 249, 249);
+            --hover-color: rgb(142, 153, 127);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="./index.html" class="logo">
+                <img src="Doubt-Photoroom.png" alt="Doubt Quiz Logo">
+            </a>
+            <div class="nav-links">
+                <a href="./index.html" class="nav-btn">Home</a>
+                <a href="./about.html" class="nav-btn">About</a>
+                <a href="./notes.html" class="nav-btn">Notes</a>
+                <a href="./interactive_quiz.html" class="nav-btn">Interactive Quiz</a>
+                <button id="theme-toggle" class="theme-toggle">
+                    <span class="sun">☀️</span>
+                    <span class="moon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Your Achievements</h1>
+        <div class="achievements-grid" id="achievementsContainer">
+            <!-- Achievements will be inserted here -->
+        </div>
+        <div class="achievement-preview">
+            <div class="achievement-card">
+                <div class="achievement-header">
+                    <h2>Latest Achievement</h2>
+                    <a href="./achievement.html" class="view-all-btn">View All</a>
+                </div>
+                <div id="latestAchievement" class="achievement-content">
+                    <!-- Latest achievement will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RANKS = {
+            NOVICE: { name: 'Novice', icon: '🌱', minScore: 0 },
+            INTERMEDIATE: { name: 'Intermediate', icon: '⭐', minScore: 70 },
+            ADVANCED: { name: 'Advanced', icon: '🏅', minScore: 80 },
+            EXPERT: { name: 'Expert', icon: '👑', minScore: 90 },
+            MASTER: { name: 'Master', icon: '🏆', minScore: 95 }
+        };
+
+        function calculateRank(percentage) {
+            if (percentage >= RANKS.MASTER.minScore) return RANKS.MASTER;
+            if (percentage >= RANKS.EXPERT.minScore) return RANKS.EXPERT;
+            if (percentage >= RANKS.ADVANCED.minScore) return RANKS.ADVANCED;
+            if (percentage >= RANKS.INTERMEDIATE.minScore) return RANKS.INTERMEDIATE;
+            return RANKS.NOVICE;
+        }
+
+        function displayAchievements() {
+            const container = document.getElementById('achievementsContainer');
+            container.innerHTML = '';
+
+            const subjects = ['math', 'physics', 'chemistry', 'biology'];
+            const sections = ['class8', 'class9', 'class10', 'class11', 'class12', 'ssc', 'upsc', 'jee', 'neet', 'gate'];
+
+            subjects.forEach(subject => {
+                const subjectCard = document.createElement('div');
+                subjectCard.className = 'achievement-card';
+
+                let totalProgress = 0;
+                let completedSections = 0;
+                let highestRank = RANKS.NOVICE;
+
+                sections.forEach(section => {
+                    const progressKey = `${subject}_${section}_progress`;
+                    const progress = localStorage.getItem(progressKey);
+                    
+                    if (progress) {
+                        const percentage = parseFloat(progress);
+                        totalProgress += percentage;
+                        completedSections++;
+                        
+                        const rank = calculateRank(percentage);
+                        if (rank.minScore > highestRank.minScore) {
+                            highestRank = rank;
+                        }
+                    }
+                });
+
+                const averageProgress = completedSections > 0 ? totalProgress / completedSections : 0;
+
+                subjectCard.innerHTML = `
+                    <div class="achievement-header">
+                        <div class="rank-icon">${highestRank.icon}</div>
+                        <div>
+                            <div class="achievement-title">${subject.charAt(0).toUpperCase() + subject.slice(1)}</div>
+                            <div>${highestRank.name} Rank</div>
+                        </div>
+                    </div>
+                    <div class="achievement-details">
+                        <div class="achievement-progress">
+                            Overall Progress
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${averageProgress}%"></div>
+                            </div>
+                        </div>
+                        <div class="achievement-stats">
+                            <span>Completed: ${completedSections}/${sections.length}</span>
+                            <span>Avg: ${averageProgress.toFixed(1)}%</span>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(subjectCard);
+            });
+        }
+
+        // Load achievements when the page loads
+        window.addEventListener('load', displayAchievements);
+    </script>
+</body>
+</html> 

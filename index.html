@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to your vision</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-text: #666;
+            --card-title: #333;
+            --footer-bg: #333;
+            --footer-text: rgb(255, 253, 253);
+            --nav-bg: rgb(8, 238, 207);
+            --nav-text: white;
+            --hero-overlay: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+            --features-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0a1a;
+            --text-color: #e0e0e0;
+            --card-bg: rgba(26, 26, 46, 0.95);
+            --card-text: rgba(255, 255, 255, 0.7);
+            --card-title: #fff;
+            --footer-bg: #0a0a1a;
+            --footer-text: #e0e0e0;
+            --nav-bg: #0a0a1a;
+            --nav-text: rgb(8, 238, 207);
+            --hero-overlay: linear-gradient(135deg, rgba(10, 10, 26, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+            --features-bg: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+        }
+
+        body {
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: rgb(20, 20, 20);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 5px;
+        }
+
+        .logo img {
+            height: 45px;
+            width: auto;
+            display: block;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover img {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--nav-text);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-links a:hover {
+            color: rgb(8, 238, 207);
+        }
+
+        .nav-links a.auth-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: rgb(8, 238, 207) !important;
+            color: rgb(20, 20, 20) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid rgb(8, 238, 207) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .auth-btn img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        .auth-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--nav-text);
+            padding: 0.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 0 1rem;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--hero-overlay);
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+            padding: 0 1rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background-color: #ffffff;
+            color: #764ba2;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 6px rgba(7, 7, 7, 0.1);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 1rem;
+            background: var(--features-bg);
+            transition: background 0.3s ease;
+        }
+
+        .features-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0 1rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.8s ease-out;
+            cursor: pointer;
+            border: 1px solid rgba(8, 238, 207, 0.1);
+            color: var(--text-color);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(8, 238, 207, 0.1) 0%, rgba(8, 238, 207, 0.05) 100%);
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.15);
+            border-color: rgba(8, 238, 207, 0.3);
+        }
+
+        .feature-card:hover::before {
+            transform: translateY(0);
+        }
+
+        .feature-card h3 {
+            margin: 1.5rem 0;
+            color: var(--card-title);
+            position: relative;
+            padding-bottom: 15px;
+            font-size: 1.5rem;
+            z-index: 1;
+        }
+
+        .feature-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: rgb(8, 238, 226);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+        }
+
+        .feature-card:hover h3::after {
+            width: 150px;
+        }
+
+        .feature-card p {
+            color: var(--card-text);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 1;
+            line-height: 1.8;
+        }
+
+        .feature-card:hover p {
+            color: #333;
+        }
+
+        /* Feature Icons */
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgb(238, 100, 8) 0%, rgb(105, 5, 187) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+
+        .feature-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotateY(360deg);
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(100px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Add animation delay for each card */
+        .feature-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .feature-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        .feature-card:nth-child(3) {
+            animation-delay: 0.5s;
+        }
+        /* Update feature card content */
+        .feature-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Add hover lift effect to adjacent cards */
+        .feature-card:hover + .feature-card {
+            transform: translateX(20px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+            padding: 2rem 1rem;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--nav-bg);
+                padding: 1rem;
+                flex-direction: column;
+                align-items: center;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 0.5rem 0;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .features-content {
+                grid-template-columns: 1fr;
+                padding: 0;
+            }
+
+            .feature-card {
+                margin: 0 1rem;
+            }
+
+            .nav-links a.auth-btn {
+                width: fit-content;
+                margin: 0.5rem auto;
+            }
+
+            .nav-links a.notes-btn {
+                width: fit-content;
+                margin: 0.5rem auto;
+            }
+
+            .nav-links a.nav-btn {
+                width: fit-content;
+                margin: 0.5rem auto;
+            }
+
+            .logo img {
+                height: 40px;
+            }
+
+            nav {
+                padding: 0.8rem 4%;
+            }
+
+            .video-background {
+                object-position: center;
+            }
+        }
+
+        /* Small Mobile Devices */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .cta-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        .notes-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: linear-gradient(45deg, rgb(8, 238, 207), #06f9d5) !important;
+            color: rgb(20, 20, 20) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid transparent !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+        }
+
+        .notes-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+            border-color: rgb(8, 238, 207) !important;
+        }
+
+        /* Update feature card styles to work with anchor tag */
+        a.feature-card {
+            display: block;
+            color: inherit;
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.8s ease-out;
+            cursor: pointer;
+            border: 1px solid rgba(8, 238, 207, 0.1);
+            text-decoration: none;
+        }
+
+        a.feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.15);
+            border-color: rgba(8, 238, 207, 0.3);
+        }
+
+        a.feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(8, 238, 207, 0.1) 0%, rgba(8, 238, 207, 0.05) 100%);
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+
+        a.feature-card:hover::before {
+            transform: translateY(0);
+        }
+
+        a.feature-card .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgb(8, 238, 207) 0%, rgb(6, 249, 213) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+
+        a.feature-card:hover .feature-icon {
+            transform: rotateY(360deg);
+        }
+
+        /* Dark mode styles for Quick Notes card */
+        [data-theme="dark"] a.feature-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-color: rgba(8, 238, 207, 0.2);
+        }
+
+        [data-theme="dark"] a.feature-card:hover {
+            border-color: rgba(8, 238, 207, 0.4);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.1);
+        }
+
+        [data-theme="dark"] a.feature-card::before {
+            background: linear-gradient(135deg, rgba(8, 238, 207, 0.1) 0%, rgba(8, 238, 207, 0.05) 100%);
+        }
+
+        [data-theme="dark"] a.feature-card h3 {
+            color: var(--card-title);
+        }
+
+        [data-theme="dark"] a.feature-card p {
+            color: var(--card-text);
+        }
+
+        [data-theme="dark"] a.feature-card h3::after {
+            background: rgb(8, 238, 207);
+        }
+
+        /* Theme Toggle Button Styles */
+        .theme-toggle {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            color: rgb(8, 238, 207);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle .sun,
+        .theme-toggle .moon {
+            position: absolute;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        [data-theme="light"] .theme-toggle .sun {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        [data-theme="light"] .theme-toggle .moon {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        [data-theme="dark"] .theme-toggle .sun {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        [data-theme="dark"] .theme-toggle .moon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Dark mode specific styles */
+        [data-theme="dark"] .feature-card {
+            border-color: rgba(8, 238, 207, 0.2);
+        }
+
+        [data-theme="dark"] .feature-card:hover {
+            border-color: rgba(8, 238, 207, 0.4);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.1);
+        }
+
+        [data-theme="dark"] .feature-card::before {
+            background: linear-gradient(135deg, rgba(8, 238, 207, 0.1) 0%, rgba(8, 238, 207, 0.05) 100%);
+        }
+
+        [data-theme="dark"] .feature-card h3::after {
+            background: rgb(8, 238, 207);
+        }
+
+        [data-theme="dark"] .cta-button {
+            background-color: rgb(8, 238, 207);
+            color: rgb(20, 20, 20);
+        }
+
+        [data-theme="dark"] .cta-button:hover {
+            background-color: transparent;
+            color: rgb(8, 238, 207);
+            border: 2px solid rgb(8, 238, 207);
+        }
+
+        [data-theme="dark"] .logo {
+            color: rgb(8, 238, 207);
+        }
+
+        [data-theme="dark"] .mobile-menu-btn {
+            color: rgb(8, 238, 207);
+        }
+
+        /* Updated Navigation Styles */
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--nav-text);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+        }
+
+        .notes-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: linear-gradient(45deg, rgb(8, 238, 207), #06f9d5) !important;
+            color: rgb(20, 20, 20) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid transparent !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+        }
+
+        .notes-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+            border-color: rgb(8, 238, 207) !important;
+        }
+
+        .auth-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: rgb(8, 238, 207) !important;
+            color: rgb(20, 20, 20) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid rgb(8, 238, 207) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .auth-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+        }
+
+        /* Dark mode button styles */
+        [data-theme="dark"] .notes-btn,
+        [data-theme="dark"] .auth-btn {
+            color: rgb(20, 20, 20) !important;
+        }
+
+        [data-theme="dark"] .notes-btn:hover,
+        [data-theme="dark"] .auth-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+        }
+
+        /* Navigation button styles */
+        .nav-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: linear-gradient(45deg, rgb(8, 238, 207), #06f9d5) !important;
+            color: rgb(20, 20, 20) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid transparent !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+        }
+
+        .nav-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+            border-color: rgb(8, 238, 207) !important;
+        }
+
+        .nav-btn.active {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+            border-color: rgb(8, 238, 207) !important;
+        }
+
+        /* Feature card link styles */
+        a.feature-card {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Quiz button specific styles */
+        .nav-btn[href="./interactive_quiz.html"]:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+            border-color: rgb(8, 238, 207) !important;
+        }
+
+        /* Enhanced feature card hover effect for quiz */
+        a.feature-card[href="interactive_quiz.html"]:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.15);
+            border-color: rgba(8, 238, 207, 0.3);
+        }
+
+        /* Dark mode specific styles for quiz feature */
+        [data-theme="dark"] a.feature-card[href="interactive_quiz.html"] {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] a.feature-card[href="interactive_quiz.html"]:hover {
+            border-color: rgba(8, 238, 207, 0.4);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.1);
+        }
+
+        /* Custom Quiz specific styles */
+        a.feature-card[href="custom_quiz.html"] .feature-icon {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+        }
+
+        a.feature-card[href="custom_quiz.html"]:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.4);
+            border-color: rgba(8, 238, 207, 0.4);
+        }
+
+        /* Dark mode specific styles for custom quiz feature */
+        [data-theme="dark"] a.feature-card[href="custom_quiz.html"] {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] a.feature-card[href="custom_quiz.html"]:hover {
+            border-color: rgba(255, 107, 107, 0.4);
+            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.1);
+        }
+
+        /* Update grid layout for 5 cards */
+        .features-content {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        @media (min-width: 1200px) {
+            .features-content {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+           
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .features-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links a.nav-btn[href="./custom_quiz.html"] {
+                width: fit-content;
+                margin: 0.5rem auto;
+            }
+        }
+
+        .achievement-preview {
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .view-all-btn {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: var(--bg-color);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(8, 238, 207, 0.3);
+        }
+
+        .achievement-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .achievement-info {
+            flex-grow: 1;
+        }
+
+        .achievement-subject {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.3rem;
+        }
+
+        /* Theme toggle styles */
+        .theme-toggle {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle .sun {
+            display: none;
+        }
+
+        .theme-toggle .moon {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="./index.html" class="logo">
+                <img src="Doubt-Photoroom.png" alt="Doubt Quiz Logo">
+            </a>
+            <div class="nav-links">
+                <a href="./index.html" class="nav-btn active">Home</a>
+                <a href="./about.html" class="nav-btn">About</a>
+                <a href="./notes.html" class="nav-btn">Notes</a>
+                <a href="./authentication.html" class="auth-btn">
+                    <img src="sign logo.jpg" alt="Sign In">
+                    Sign In
+                </a>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                    <span class="sun">☀️</span>
+                    <span class="moon">🌙</span>
+                </button>
+            </div>
+            <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
+        </div>
+    </nav>
+
+    <section class="hero" id="home">
+        <video class="video-background" autoplay muted loop playsinline>
+            <source src="3163534-uhd_3840_2160_30fps.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>Welcome to your vision</h1>
+            <p>Challenging goals can feel scary, encouraging you to leave your comfort zone and push your boundaries.</p>
+            <a href="#features" class="cta-button">Get Started</a>
+        </div>
+    </section>
+
+    <section class="features" id="features">
+        <div class="features-content">
+            <a href="interactive_quiz.html" class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i>🎯</i>
+                    </div>
+                    <h3>Interactive Quizzes</h3>
+                    <p>Test your knowledge with subject-wise quizzes in Mathematics, Physics, Chemistry, and Biology. Track your progress and improve your understanding.</p>
+                </div>
+                <div class="ripple"></div>
+            </a>
+            <a href="customquiz.html" class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i>✨</i>
+                    </div>
+                    <h3>Custom Quiz</h3>
+                    <p>Create your own personalized quizzes. Add questions, set difficulty levels, and share with others. Perfect for self-study and group learning.</p>
+                </div>
+            </a>
+            <a href="progress.html" class="feature-card">
+            <div class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i>📊</i>
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your learning journey with detailed analytics and performance metrics to help you identify areas for improvement.</p>
+                </div>
+            </div>
+               </a>
+            <a href="notes.html" class="feature-card">
+                <div class="feature-content">
+                    <div class="feature-icon">
+                        <i>📝</i>
+                    </div>
+                    <h3>Quick Notes</h3>
+                    <p>Take and organize your study notes with our beautiful note-taking interface. Features auto-save and easy access to all your notes.</p>
+                </div>
+            </a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Your Website. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        if (mobileMenuBtn && navLinks) {
+            mobileMenuBtn.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    navLinks.classList.remove('active');
+                }
+            });
+
+            // Close mobile menu when clicking a link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                });
+            });
+        }
+
+        // Theme switcher functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Set initial theme
+        function setInitialTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        }
+
+        // Toggle theme function
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Initialize theme
+        setInitialTheme();
+
+        // Add click event listener to theme toggle button
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
+
+        // Ensure theme is set when page loads
+        document.addEventListener('DOMContentLoaded', setInitialTheme);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz - Subject-wise Learning</title>
+    <style>
+        :root {
+            --primary-color: rgb(8, 238, 207);
+            --bg-color: #1a1a2e;
+            --text-color: #fff;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --hover-color: rgba(8, 238, 207, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-color) 0%, #16213e 100%);
+            min-height: 100vh;
+            color: var(--text-color);
+            padding-top: 80px;
+        }
+
+        /* Navigation Styles */
+        nav {
+            background-color: rgb(20, 20, 20);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 45px;
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(45deg, var(--primary-color), #06f9d5);
+            color: rgb(20, 20, 20);
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        /* Container Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Subject Selection Styles */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .subject-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 5px 15px rgba(8, 238, 207, 0.2);
+        }
+
+        .subject-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .subject-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .subject-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        /* Quiz Interface Styles */
+        .quiz-container {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-header h2 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .question-container {
+            margin-bottom: 2rem;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .option:hover {
+            background: var(--hover-color);
+            border-color: var(--primary-color);
+        }
+
+        .option.selected {
+            background: var(--primary-color);
+            color: var(--bg-color);
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .quiz-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: var(--primary-color);
+            color: var(--bg-color);
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(8, 238, 207, 0.3);
+        }
+
+        .quiz-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Subject Section Styles */
+        .subject-sections {
+            margin-top: 1rem;
+        }
+
+        .section-select {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .section-select:hover {
+            border-color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .section-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(8, 238, 207, 0.2);
+        }
+
+        .section-select option {
+            background: var(--bg-color);
+            color: var(--text-color);
+            padding: 0.5rem;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-container {
+                padding: 1rem;
+            }
+
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-controls {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .quiz-btn {
+                width: 100%;
+            }
+
+            .section-select {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Theme Switcher Styles */
+        .theme-toggle {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle .sun {
+            display: none;
+        }
+
+        .theme-toggle .moon {
+            display: block;
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f8f9fa;
+            --text-color: #1a1a2e;
+            --card-bg: rgb(252, 249, 249);
+            --hover-color: rgb(142, 153, 127);
+        }
+
+        [data-theme="light"] .theme-toggle .sun {
+            display: block;
+        }
+
+        [data-theme="light"] .theme-toggle .moon {
+            display: none;
+        }
+
+        [data-theme="light"] .option {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="light"] .section-select {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.1);
+            color: var(--text-color);
+        }
+
+        [data-theme="light"] .section-select option {
+            background: #f8f9fa;
+            color: #1a1a2e;
+        }
+
+        /* Recent Results Styles */
+        .recent-results {
+            margin-top: 3rem;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .recent-results h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .result-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(8, 238, 207, 0.1);
+        }
+
+        .result-subject {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-section {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-score {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        .result-date {
+            font-size: 0.8rem;
+            color: var(--text-color);
+            opacity: 0.6;
+            margin-top: 0.5rem;
+        }
+
+        /* Mobile Styles for Recent Results */
+        @media (max-width: 768px) {
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .recent-results {
+                padding: 1rem;
+            }
+        }
+
+        /* Add these to your existing CSS */
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .clear-results-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 0, 0, 0.2);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .clear-results-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        [data-theme="light"] .clear-results-btn {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.2);
+        }
+
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .delete-result-btn {
+            background:none;
+            color: var(--text-color);
+            border: 1px solid none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        .delete-result-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+            transform: scale(1.1);
+        }
+
+        [data-theme="light"] .delete-result-btn {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.2);
+        }
+
+        .progress-container {
+            margin-top: 0.5rem;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+
+        .delete-progress-btn {
+            background: none;
+            color: var(--text-color);
+            border: 1px solid none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            line-height: 1;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        .delete-progress-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+            transform: scale(1.1);
+        }
+
+        [data-theme="light"] .delete-progress-btn {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.2);
+        }
+
+        /* Add this to your CSS section */
+        .timer {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+            font-weight: bold;
+        }
+
+        .timer.warning {
+            color: #ff9800;
+            animation: pulse 1s infinite;
+        }
+
+        .timer.danger {
+            color: #ff0000;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Feature Card Styles */
+        .feature-card {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            background: var(--card-bg);
+            padding: 2.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: cardEntrance 0.8s ease-out;
+            cursor: pointer;
+            border: 1px solid rgba(8, 238, 207, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.15);
+            border-color: rgba(8, 238, 207, 0.3);
+        }
+
+        .feature-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, rgb(8, 238, 207) 0%, #06f9d5 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotateY(360deg);
+        }
+
+        .feature-card h3 {
+            margin: 1.5rem 0;
+            color: var(--text-color);
+            position: relative;
+            padding-bottom: 15px;
+            font-size: 1.5rem;
+            z-index: 1;
+        }
+
+        .feature-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: rgb(8, 238, 207);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+        }
+
+        .feature-card:hover h3::after {
+            width: 150px;
+        }
+
+        .feature-card p {
+            color: var(--text-color);
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 1;
+            line-height: 1.8;
+        }
+
+        /* Progress Tracking specific styles */
+        a.feature-card[href="progress.html"] {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a.feature-card[href="progress.html"] .feature-icon {
+            background: linear-gradient(135deg, rgb(8, 238, 207) 0%, #06f9d5 100%);
+        }
+
+        a.feature-card[href="progress.html"]:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.15);
+            border-color: rgba(8, 238, 207, 0.3);
+        }
+
+        /* Dark mode specific styles */
+        [data-theme="dark"] .feature-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border-color: rgba(8, 238, 207, 0.2);
+        }
+
+        [data-theme="dark"] .feature-card:hover {
+            border-color: rgba(8, 238, 207, 0.4);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.1);
+        }
+
+        [data-theme="dark"] .feature-card h3 {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .feature-card p {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .feature-card h3::after {
+            background: rgb(8, 238, 207);
+        }
+
+        /* Animation keyframes */
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(100px) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .feature-card {
+                margin: 1rem;
+                padding: 2rem 1.5rem;
+            }
+
+            .feature-card h3 {
+                font-size: 1.3rem;
+            }
+
+            .feature-icon {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="./index.html" class="logo">
+                <img src="Doubt-Photoroom.png" alt="Doubt Quiz Logo">
+            </a>
+            <div class="nav-links">
+                <a href="./index.html" class="nav-btn">Home</a>
+                <a href="./about.html" class="nav-btn">About</a>
+                <a href="./notes.html" class="nav-btn">Notes</a>
+                <a href="./achievement.html" class="nav-btn">Achievements</a>
+                <button id="theme-toggle" class="theme-toggle">
+                    <span class="sun">☀️</span>
+                    <span class="moon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="subjects-grid">
+            <!-- Mathematics -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">📐</div>
+                </div>
+                <h3 class="subject-title">Mathematics</h3>
+                <div class="subject-sections">
+                    <select class="section-select" onchange="startQuiz('math', this.value)">
+                        <option value="">Select Class/Exam</option>
+                        <option value="class8">Class 8th</option>
+                        <option value="class9">Class 9th</option>
+                        <option value="class10">Class 10th</option>
+                        <option value="class11">Class 11th</option>
+                        <option value="class12">Class 12th</option>
+                        <option value="ssc">SSC</option>
+                        <option value="upsc">UPSC</option>
+                        <option value="jee">JEE</option>
+                        <option value="gate">GATE</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Physics -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">⚡</div>
+                </div>
+                <h3 class="subject-title">Physics</h3>
+                <div class="subject-sections">
+                    <select class="section-select" onchange="startQuiz('physics', this.value)">
+                        <option value="">Select Class/Exam</option>
+                        <option value="class8">Class 8th</option>
+                        <option value="class9">Class 9th</option>
+                        <option value="class10">Class 10th</option>
+                        <option value="class11">Class 11th</option>
+                        <option value="class12">Class 12th</option>
+                        <option value="ssc">SSC</option>
+                        <option value="upsc">UPSC</option>
+                        <option value="jee">JEE</option>
+                        <option value="neet">NEET</option>
+                        <option value="gate">GATE</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Chemistry -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">🧪</div>
+                </div>
+                <h3 class="subject-title">Chemistry</h3>
+                <div class="subject-sections">
+                    <select class="section-select" onchange="startQuiz('chemistry', this.value)">
+                        <option value="">Select Class/Exam</option>
+                        <option value="class8">Class 8th</option>
+                        <option value="class9">Class 9th</option>
+                        <option value="class10">Class 10th</option>
+                        <option value="class11">Class 11th</option>
+                        <option value="class12">Class 12th</option>
+                        <option value="ssc">SSC</option>
+                        <option value="upsc">UPSC</option>
+                        <option value="jee">JEE</option>
+                        <option value="neet">NEET</option>
+                        <option value="gate">GATE</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Biology -->
+            <div class="subject-card">
+                <div class="subject-header">
+                    <div class="subject-icon">🧬</div>
+                </div>
+                <h3 class="subject-title">Biology</h3>
+                <div class="subject-sections">
+                    <select class="section-select" onchange="startQuiz('biology', this.value)">
+                        <option value="">Select Class/Exam</option>
+                        <option value="class8">Class 8th</option>
+                        <option value="class9">Class 9th</option>
+                        <option value="class10">Class 10th</option>
+                        <option value="class11">Class 11th</option>
+                        <option value="class12">Class 12th</option>
+                        <option value="ssc">SSC</option>
+                        <option value="upsc">UPSC</option>
+                        <option value="neet">NEET</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-container" id="quizContainer">
+            <div class="quiz-header">
+                <h2 id="subjectTitle">Subject Quiz</h2>
+                <div class="timer" id="timer">Time: 30s</div>
+                <p id="progressText">Question 1 of 10</p>
+            </div>
+
+            <div class="question-container">
+                <p class="question" id="questionText">Question text will appear here</p>
+                <div class="options-grid" id="optionsContainer">
+                    <!-- Options will be inserted here -->
+                </div>
+            </div>
+
+            <div class="quiz-controls">
+                <button class="quiz-btn" onclick="previousQuestion()" id="prevBtn">Previous</button>
+                <button class="quiz-btn" onclick="nextQuestion()" id="nextBtn">Next</button>
+            </div>
+        </div>
+
+        <div class="recent-results">
+            <div class="results-header">
+                <h2>Recent Results</h2>
+                <button class="clear-results-btn" onclick="clearResults()">Clear All Results</button>
+            </div>
+            <div class="results-grid" id="resultsContainer">
+                <!-- Results will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function handleScriptError(error) {
+            console.error('Error loading question file:', error);
+            alert('Error loading questions. Please try again later.');
+        }
+    </script>
+
+    <script src="mathematics.html" onerror="handleScriptError(event)"></script>
+    <script src="physics.html" onerror="handleScriptError(event)"></script>
+    <script src="chemistry.html" onerror="handleScriptError(event)"></script>
+    <script src="biology.html" onerror="handleScriptError(event)"></script>
+
+    <script>
+        // Remove the old quizData structure since we're using separate files now
+        let currentSubject = null;
+        let currentQuestion = 0;
+        let currentSection = null;
+        let userAnswers = [];
+        let timer = null;
+        let timeLeft = 30;
+
+        function startQuiz(subject, section) {
+            if (!section) {
+                alert('Please select a class or exam category');
+                return;
+            }
+            
+            currentSubject = subject;
+            currentSection = section;
+            currentQuestion = 0;
+            
+            // Get questions from the appropriate subject file
+            const questions = getQuestionsForSection(subject, section);
+            if (!questions || questions.length === 0) {
+                alert('Questions for this section are coming soon!');
+                return;
+            }
+            
+            userAnswers = new Array(questions.length).fill(null);
+            
+            // Get the subject name from the question set
+            const subjectNames = {
+                math: "Mathematics",
+                physics: "Physics",
+                chemistry: "Chemistry",
+                biology: "Biology"
+            };
+            
+            document.getElementById('subjectTitle').textContent = 
+                `${subjectNames[subject]} - ${formatSectionName(section)}`;
+            document.getElementById('quizContainer').style.display = 'block';
+            updateQuestion();
+            
+            document.getElementById('quizContainer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = 30;
+            updateTimerDisplay();
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    autoNextQuestion();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerElement = document.getElementById('timer');
+            timerElement.textContent = `Time: ${timeLeft}s`;
+            
+            // Add warning classes based on time left
+            timerElement.className = 'timer';
+            if (timeLeft <= 10) {
+                timerElement.classList.add('warning');
+            }
+            if (timeLeft <= 5) {
+                timerElement.classList.add('danger');
+            }
+        }
+
+        function autoNextQuestion() {
+            if (currentQuestion === getQuestionsForSection(currentSubject, currentSection).length - 1) {
+                finishQuiz();
+            } else {
+                currentQuestion++;
+                updateQuestion();
+            }
+        }
+
+        function updateQuestion() {
+            const questions = getQuestionsForSection(currentSubject, currentSection);
+            const question = questions[currentQuestion];
+            
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('progressText').textContent = 
+                `Question ${currentQuestion + 1} of ${questions.length}`;
+
+            // Update options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = `option ${userAnswers[currentQuestion] === index ? 'selected' : ''}`;
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionElement);
+            });
+
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentQuestion === 0;
+            document.getElementById('nextBtn').textContent = 
+                currentQuestion === questions.length - 1 ? 'Finish' : 'Next';
+            
+            // Start the timer for the new question
+            startTimer();
+        }
+
+        function selectOption(index) {
+            userAnswers[currentQuestion] = index;
+            clearInterval(timer);
+            startTimer();
+            updateQuestion();
+        }
+
+        function nextQuestion() {
+            clearInterval(timer);
+            const questions = getQuestionsForSection(currentSubject, currentSection);
+            if (currentQuestion === questions.length - 1) {
+                finishQuiz();
+            } else {
+                currentQuestion++;
+                updateQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            clearInterval(timer);
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateQuestion();
+            }
+        }
+
+        function saveResult(subject, section, score, total, percentage, rank) {
+            const result = {
+                subject,
+                section,
+                score,
+                total,
+                percentage: percentage.toFixed(1),
+                rank: rank,
+                date: new Date().toISOString()
+            };
+
+            let results = JSON.parse(localStorage.getItem('recentResults') || '[]');
+            results.unshift(result);
+            results = results.slice(0, 6); // Keep only the 6 most recent results
+            localStorage.setItem('recentResults', JSON.stringify(results));
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function displayRecentResults() {
+            const results = JSON.parse(localStorage.getItem('recentResults') || '[]');
+            const container = document.getElementById('resultsContainer');
+            container.innerHTML = '';
+
+            if (results.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-color); opacity: 0.7;">No quiz results yet. Take a quiz to see your results here!</p>';
+                return;
+            }
+
+            results.forEach((result, index) => {
+                const resultCard = document.createElement('div');
+                resultCard.className = 'result-card';
+                resultCard.innerHTML = `
+                    <div class="result-header">
+                        <div class="result-subject">${result.subject}</div>
+                        <button class="delete-result-btn" onclick="deleteResult(${index})">×</button>
+                    </div>
+                    <div class="result-section">${formatSectionName(result.section)}</div>
+                    <div class="result-score">
+                        ${result.rank ? result.rank.icon : ''} ${result.score}/${result.total} (${result.percentage}%)
+                    </div>
+                    <div class="result-date">${formatDate(result.date)}</div>
+                `;
+                container.appendChild(resultCard);
+            });
+        }
+
+        function finishQuiz() {
+            clearInterval(timer);
+            const questions = getQuestionsForSection(currentSubject, currentSection);
+            let correct = 0;
+            
+            questions.forEach((question, index) => {
+                if (userAnswers[index] === question.correct) correct++;
+            });
+
+            const percentage = (correct / questions.length) * 100;
+            
+            // Calculate rank
+            const RANKS = {
+                NOVICE: { name: 'Novice', icon: '🌱', minScore: 0 },
+                INTERMEDIATE: { name: 'Intermediate', icon: '⭐', minScore: 70 },
+                ADVANCED: { name: 'Advanced', icon: '🏅', minScore: 80 },
+                EXPERT: { name: 'Expert', icon: '👑', minScore: 90 },
+                MASTER: { name: 'Master', icon: '🏆', minScore: 95 }
+            };
+
+            let rank;
+            if (percentage >= 95) rank = RANKS.MASTER;
+            else if (percentage >= 90) rank = RANKS.EXPERT;
+            else if (percentage >= 80) rank = RANKS.ADVANCED;
+            else if (percentage >= 70) rank = RANKS.INTERMEDIATE;
+            else rank = RANKS.NOVICE;
+
+            // Save the result with rank information
+            saveResult(
+                currentSubject,
+                currentSection,
+                correct,
+                questions.length,
+                percentage,
+                rank
+            );
+
+            // Show results with rank
+            alert(`Quiz completed!\nScore: ${correct}/${questions.length} (${percentage.toFixed(1)}%)\nRank: ${rank.icon} ${rank.name}`);
+            
+            // Save progress to localStorage
+            const progressKey = `${currentSubject}_${currentSection}_progress`;
+            localStorage.setItem(progressKey, percentage);
+            
+            // Reset quiz view
+            document.getElementById('quizContainer').style.display = 'none';
+            
+            // Update the recent results display
+            displayRecentResults();
+        }
+
+        function formatSectionName(section) {
+            const names = {
+                'class8': 'Class 8th',
+                'class9': 'Class 9th',
+                'class10': 'Class 10th',
+                'class11': 'Class 11th',
+                'class12': 'Class 12th',
+                'ssc': 'SSC',
+                'upsc': 'UPSC',
+                'jee': 'JEE',
+                'neet': 'NEET',
+                'gate': 'GATE'
+            };
+            return names[section] || section;
+        }
+
+        function getQuestionsForSection(subject, section) {
+            try {
+                const questionSets = {
+                    math: mathQuestions,
+                    physics: physicsQuestions,
+                    chemistry: chemistryQuestions,
+                    biology: biologyQuestions
+                };
+
+                if (!questionSets[subject]) {
+                    console.error(`Question set not found for subject: ${subject}`);
+                    return null;
+                }
+
+                if (!questionSets[subject][section]) {
+                    console.error(`Questions not found for section: ${section} in subject: ${subject}`);
+                    return null;
+                }
+
+                return questionSets[subject][section].questions;
+            } catch (error) {
+                console.error('Error getting questions:', error);
+                return null;
+            }
+        }
+
+        // Add function to load and display progress
+        function loadProgress() {
+            const subjects = ['math', 'physics', 'chemistry', 'biology'];
+            const sections = ['class8', 'class9', 'class10', 'class11', 'class12', 'ssc', 'upsc', 'jee', 'neet', 'gate'];
+            
+            subjects.forEach(subject => {
+                sections.forEach(section => {
+                    const progressKey = `${subject}_${section}_progress`;
+                    const progress = localStorage.getItem(progressKey);
+                    
+                    if (progress) {
+                        const card = document.querySelector(`[onchange="startQuiz('${subject}', this.value)"]`).closest('.subject-card');
+                        
+                        // Create progress container
+                        const progressContainer = document.createElement('div');
+                        progressContainer.className = 'progress-container';
+
+                        // Create progress info wrapper
+                        const progressInfo = document.createElement('div');
+                        progressInfo.className = 'progress-info';
+                        
+                        // Add progress label
+                        const progressLabel = document.createElement('div');
+                        progressLabel.className = 'progress-label';
+                        progressLabel.textContent = `${formatSectionName(section)}: ${Math.round(progress)}%`;
+                        
+                        // Add delete button
+                        const deleteButton = document.createElement('button');
+                        deleteButton.className = 'delete-progress-btn';
+                        deleteButton.innerHTML = '×';
+                        deleteButton.onclick = () => deleteSectionProgress(subject, section);
+                        
+                        // Create progress bar
+                        const progressBar = document.createElement('div');
+                        progressBar.className = 'progress-bar';
+                        const progressFill = document.createElement('div');
+                        progressFill.className = 'progress-fill';
+                        progressFill.style.width = `${progress}%`;
+                        progressBar.appendChild(progressFill);
+                        
+                        // Assemble the components
+                        progressInfo.appendChild(progressLabel);
+                        progressInfo.appendChild(deleteButton);
+                        progressContainer.appendChild(progressInfo);
+                        progressContainer.appendChild(progressBar);
+                        card.appendChild(progressContainer);
+                    }
+                });
+            });
+        }
+
+        // Call loadProgress when the page loads
+        window.addEventListener('load', () => {
+            loadProgress();
+            displayRecentResults();
+            initTheme();
+        });
+
+        // Theme Switcher
+        function initTheme() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeIcon(theme);
+        }
+
+        function updateThemeIcon(theme) {
+            const sunIcon = document.querySelector('.theme-toggle .sun');
+            const moonIcon = document.querySelector('.theme-toggle .moon');
+            
+            if (theme === 'light') {
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        // Add event listener for theme toggle button
+        document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+        function clearResults() {
+            if (confirm('Are you sure you want to clear all quiz results and progress? This cannot be undone.')) {
+                // Clear recent results
+                localStorage.removeItem('recentResults');
+                
+                // Clear all progress data
+                const subjects = ['math', 'physics', 'chemistry', 'biology'];
+                const sections = ['class8', 'class9', 'class10', 'class11', 'class12', 'ssc', 'upsc', 'jee', 'neet', 'gate'];
+                
+                subjects.forEach(subject => {
+                    sections.forEach(section => {
+                        const progressKey = `${subject}_${section}_progress`;
+                        localStorage.removeItem(progressKey);
+                    });
+                });
+
+                // Refresh the display
+                displayRecentResults();
+                
+                // Remove all progress containers from the UI
+                const cards = document.querySelectorAll('.subject-card');
+                cards.forEach(card => {
+                    const progressContainers = card.querySelectorAll('.progress-container');
+                    progressContainers.forEach(container => container.remove());
+                });
+
+                // Dispatch a storage event to notify progress.html
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'recentResults',
+                    newValue: null,
+                    oldValue: null,
+                    storageArea: localStorage
+                }));
+            }
+        }
+
+        function deleteResult(index) {
+            if (confirm('Are you sure you want to delete this result?')) {
+                let results = JSON.parse(localStorage.getItem('recentResults') || '[]');
+                results.splice(index, 1);
+                localStorage.setItem('recentResults', JSON.stringify(results));
+                displayRecentResults(); // Refresh the display
+            }
+        }
+
+        function deleteSectionProgress(subject, section) {
+            if (confirm(`Are you sure you want to delete progress for ${formatSectionName(section)} in ${subject}?`)) {
+                const progressKey = `${subject}_${section}_progress`;
+                localStorage.removeItem(progressKey);
+                
+                // Find and remove the specific progress container
+                const card = document.querySelector(`[onchange="startQuiz('${subject}', this.value)"]`).closest('.subject-card');
+                const progressContainers = card.querySelectorAll('.progress-container');
+                progressContainers.forEach(container => {
+                    if (container.querySelector('.progress-label').textContent.includes(formatSectionName(section))) {
+                        container.remove();
+                    }
+                });
+            }
+        }
+
+        function calculateRank(percentage) {
+            if (percentage >= 95) return { name: 'Master', icon: '🏆', minScore: 95 };
+            if (percentage >= 90) return { name: 'Expert', icon: '👑', minScore: 90 };
+            if (percentage >= 80) return { name: 'Advanced', icon: '🏅', minScore: 80 };
+            if (percentage >= 70) return { name: 'Intermediate', icon: '⭐', minScore: 70 };
+            return { name: 'Novice', icon: '🌱', minScore: 0 };
+        }
+    </script>
+</body>
+</html> 

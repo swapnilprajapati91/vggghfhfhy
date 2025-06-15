@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Doubt Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-text: #666;
+            --card-title: #333;
+            --footer-bg: #333;
+            --footer-text: rgb(255, 253, 253);
+            --nav-bg: rgb(8, 238, 207);
+            --nav-text: white;
+            --input-bg: white;
+            --input-border: #ddd;
+            --input-text: #333;
+            --button-bg: rgb(8, 238, 207);
+            --button-text: white;
+            --hero-overlay: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+            --features-bg: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0a1a;
+            --text-color: #e0e0e0;
+            --card-bg: rgba(26, 26, 46, 0.95);
+            --card-text: rgba(255, 255, 255, 0.7);
+            --card-title: #fff;
+            --footer-bg: #0a0a1a;
+            --footer-text: #e0e0e0;
+            --nav-bg: #0a0a1a;
+            --nav-text: rgb(8, 238, 207);
+            --hero-overlay: linear-gradient(135deg, rgba(10, 10, 26, 0.9) 0%, rgba(26, 26, 46, 0.9) 100%);
+            --features-bg: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+        }
+
+        body {
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: rgb(20, 20, 20);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            background: none;
+            padding: 5px;
+        }
+
+        .logo img {
+            height: 45px;
+            width: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--nav-text);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+        }
+
+        .nav-links a:hover {
+            color: rgb(8, 238, 207);
+        }
+
+        .notes-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: linear-gradient(45deg, rgb(8, 238, 207), #06f9d5) !important;
+            color: rgb(20, 20, 20) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid transparent !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+        }
+
+        .notes-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+            border-color: rgb(8, 238, 207) !important;
+        }
+
+        .auth-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: rgb(8, 238, 207) !important;
+            color: rgb(10, 10, 10) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid rgb(8, 238, 207) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            text-decoration: none !important;
+        }
+
+        .auth-btn:hover {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+        }
+
+        .auth-btn img {
+            height: 20px;
+            width: auto;
+            filter: brightness(0) invert(0);
+            transition: filter 0.3s ease;
+        }
+
+        .auth-btn:hover img {
+            filter: brightness(0) saturate(100%) invert(87%) sepia(82%) saturate(4016%) hue-rotate(116deg) brightness(97%) contrast(94%);
+        }
+
+        /* Mobile menu styles */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--nav-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: var(--nav-bg);
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 0.5rem 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-links a.auth-btn {
+                width: fit-content;
+                margin: 0.5rem auto;
+                padding: 0.5rem 1.5rem !important;
+            }
+
+            .nav-links a.notes-btn {
+                width: fit-content;
+                margin: 0.5rem auto;
+            }
+        }
+
+        /* Theme Toggle Button Styles */
+        .theme-toggle {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle .sun,
+        .theme-toggle .moon {
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle .sun {
+            font-size: 24px;
+        }
+
+        .theme-toggle .moon {
+            font-size: 22px;
+            opacity: 0;
+            transform: scale(0.5) rotate(-90deg);
+        }
+
+        .theme-toggle.clicked {
+            animation: clickEffect 0.5s ease;
+        }
+
+        @keyframes clickEffect {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        /* Keep your existing about.html specific styles below this line */
+        .about-hero {
+            background: linear-gradient(135deg, rgba(8, 238, 207, 0.1) 0%, rgba(8, 238, 207, 0.05) 100%);
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 6rem 1rem 4rem;
+        }
+
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="1" fill="%2308EECF" opacity="0.1"/></svg>');
+            opacity: 0.5;
+            animation: floatingDots 20s linear infinite;
+        }
+
+        @keyframes floatingDots {
+            0% { background-position: 0 0; }
+            100% { background-position: 100px 100px; }
+        }
+
+        .about-hero-content {
+            text-align: center;
+            max-width: 800px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-title {
+            font-size: 4rem;
+            color: var(--card-title);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .about-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: rgb(8, 238, 207);
+            border-radius: 2px;
+        }
+
+        .about-subtitle {
+            font-size: 1.4rem;
+            color: var(--card-text);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .mission-section {
+            padding: 6rem 1rem;
+            background: var(--bg-color);
+        }
+
+        .mission-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .mission-text {
+            padding-right: 2rem;
+        }
+
+        .mission-text h2 {
+            font-size: 2.5rem;
+            color: var(--card-title);
+            margin-bottom: 1.5rem;
+        }
+
+        .mission-text p {
+            font-size: 1.1rem;
+            color: var(--card-text);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .mission-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .mission-features li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: var(--card-text);
+        }
+
+        .mission-features li::before {
+            content: '✓';
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: rgb(8, 238, 207);
+            border-radius: 50%;
+            margin-right: 1rem;
+            color: white;
+            text-align: center;
+            line-height: 24px;
+        }
+
+        .mission-image {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .mission-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .stats-section {
+            padding: 6rem 1rem;
+            background: linear-gradient(135deg, rgb(8, 238, 207, 0.1) 0%, rgba(0, 180, 216, 0.1) 100%);
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: rgb(8, 238, 207);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--card-text);
+        }
+
+        .team-section {
+            padding: 6rem 1rem;
+            background: var(--bg-color);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--card-title);
+            margin-bottom: 3rem;
+        }
+
+        .team-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(8, 238, 207, 0.1);
+        }
+
+        .member-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: rgb(8, 238, 207);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+        }
+
+        .member-name {
+            font-size: 1.4rem;
+            color: var(--card-title);
+            margin-bottom: 0.5rem;
+        }
+
+        .member-role {
+            font-size: 1rem;
+            color: var(--card-text);
+            margin-bottom: 1rem;
+        }
+
+        .member-bio {
+            font-size: 0.9rem;
+            color: var(--card-text);
+            line-height: 1.6;
+        }
+
+        .cta-section {
+            padding: 6rem 1rem;
+            background: linear-gradient(135deg, rgb(8, 238, 207) 0%, #00b4d8 100%);
+            text-align: center;
+            color: white;
+        }
+
+        .cta-title {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-text {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: white;
+            color: rgb(8, 238, 207);
+            text-decoration: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 992px) {
+            .mission-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-title {
+                font-size: 3rem;
+            }
+
+            .about-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .mission-text {
+                padding-right: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1.5rem !important;
+            background: linear-gradient(45deg, rgb(8, 238, 207), #06f9d5) !important;
+            color: rgb(20, 20, 20) !important;
+            border-radius: 25px !important;
+            font-weight: bold !important;
+            transition: all 0.3s ease !important;
+            border: 2px solid transparent !important;
+            text-decoration: none !important;
+            display: inline-block !important;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+            border-color: rgb(8, 238, 207) !important;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="./index.html" class="logo">
+                <img src="Doubt-Photoroom.png" alt="Doubt Quiz Logo">
+            </a>
+            <div class="nav-links">
+                <a href="./index.html" class="nav-btn">Home</a>
+                <a href="./about.html" class="nav-btn active">About</a>
+                <a href="./notes.html" class="nav-btn">Notes</a>
+                <a href="./authentication.html" class="auth-btn">
+                    <img src="sign logo.jpg" alt="Sign In">
+                    Sign In
+                </a>
+                <button id="theme-toggle" class="theme-toggle">
+                    <span class="sun">☀️</span>
+                    <span class="moon">🌙</span>
+                </button>
+            </div>
+            <button id="mobile-menu-btn" class="mobile-menu-btn">☰</button>
+        </div>
+    </nav>
+
+    <section class="about-hero">
+        <div class="about-hero-content">
+            <h1 class="about-title">About Doubt Quiz</h1>
+            <p class="about-subtitle">Empowering learners worldwide with interactive quizzes and comprehensive knowledge assessment tools.</p>
+        </div>
+    </section>
+
+    <section class="mission-section">
+        <div class="mission-content">
+            <div class="mission-text">
+                <h2>Our Mission</h2>
+                <p>At Doubt Quiz, we believe that learning should be engaging, accessible, and effective. Our platform is designed to help students and professionals master their subjects through interactive quizzes and comprehensive assessments.</p>
+                <ul class="mission-features">
+                    <li>Personalized learning experience</li>
+                    <li>Real-time progress tracking</li>
+                    <li>Expert-curated content</li>
+                    <li>Interactive quiz formats</li>
+                    <li>Detailed performance analytics</li>
+                </ul>
+            </div>
+            <div class="mission-image">
+                <img src="learning image.avif" 
+                     alt="Students Learning"
+                     onerror="this.src='./images/fallback-image.jpg'">
+            </div>
+        </div>
+    </section>
+
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Quizzes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">95%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support</div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="cta-section">
+        <h2 class="cta-title">Ready to Start Learning?</h2>
+        <p class="cta-text">Join thousands of learners who are already improving their knowledge with Doubt Quiz.</p>
+        <a href="./authentication.html" class="cta-button">Get Started Now</a>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Doubt Quiz. All rights reserved.</p>
+    </footer>
+
+    <script src="./js/theme-switcher.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.mobile-menu-btn').addEventListener('click', function() {
+            document.querySelector('.nav-links').classList.toggle('active');
+        });
+
+        // Intersection Observer for animations
+        try {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+            }, { threshold: 0.1 });
+
+            // Apply animations to elements
+        document.querySelectorAll('.mission-content, .stat-card, .team-member').forEach((el) => {
+                if (el) {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+                }
+        });
+        } catch (error) {
+            console.warn('Animation features not supported in this browser:', error);
+        }
+    </script>
+</body>
+</html> 

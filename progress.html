@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Analytics</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --bg-color: #f8f9fa;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --border-color: rgba(8, 238, 207, 0.2);
+            --primary-color: rgb(8, 238, 207);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0a1a;
+            --text-color: #e0e0e0;
+            --card-bg: rgba(26, 26, 46, 0.95);
+            --border-color: rgba(8, 238, 207, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+
+        /* Navigation */
+        nav {
+            background-color: rgb(20, 20, 20);
+            padding: 1rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 45px;
+            width: auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(45deg, rgb(8, 238, 207), #06f9d5);
+            color: rgb(20, 20, 20);
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: transparent;
+            color: rgb(8, 238, 207);
+            border-color: rgb(8, 238, 207);
+        }
+
+        .nav-btn.active {
+            background: transparent !important;
+            color: rgb(8, 238, 207) !important;
+            border-color: rgb(8, 238, 207) !important;
+        }
+
+        /* Charts Container */
+        .charts-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-header {
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle .sun,
+        .theme-toggle .moon {
+            position: absolute;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle .sun {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        .theme-toggle .moon {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        [data-theme="light"] .theme-toggle .sun {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        [data-theme="light"] .theme-toggle .moon {
+            opacity: 0;
+            transform: scale(0);
+        }
+
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Progress Tracking specific styles */
+        a.feature-card[href="progress.html"] .feature-icon {
+            background: linear-gradient(135deg, rgb(8, 238, 207) 0%, #06f9d5 100%);
+        }
+
+        a.feature-card[href="progress.html"]:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.15);
+            border-color: rgba(8, 238, 207, 0.3);
+        }
+
+        /* Dark mode specific styles for progress tracking feature */
+        [data-theme="dark"] a.feature-card[href="progress.html"] {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] a.feature-card[href="progress.html"]:hover {
+            border-color: rgba(8, 238, 207, 0.4);
+            box-shadow: 0 20px 40px rgba(8, 238, 207, 0.1);
+        }
+
+        .charts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 1rem;
+        }
+
+        .charts-header h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .clear-progress-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 0, 0, 0.2);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .clear-progress-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        [data-theme="light"] .clear-progress-btn {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="./index.html" class="logo">
+                <img src="Doubt-Photoroom.png" alt="Doubt Quiz Logo">
+            </a>
+            <div class="nav-links">
+                <a href="./index.html" class="nav-btn">Home</a>
+                <a href="./interactive_quiz.html" class="nav-btn">Quiz</a>
+                <a href="./progress.html" class="nav-btn active">Progress</a>
+                <button id="theme-toggle" class="theme-toggle">
+                    <span class="sun">☀️</span>
+                    <span class="moon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="charts-header">
+        <h2>Progress Analytics</h2>
+        <button class="clear-progress-btn" onclick="clearAllProgress()">Clear All Progress</button>
+    </div>
+
+    <div class="charts-container">
+        <div class="chart-card">
+            <div class="chart-header">
+                <h2 class="chart-title">Progress Over Time</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="progressChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h2 class="chart-title">Subject Completion</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="completionChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <h2 class="chart-title">Subject Performance</h2>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="performanceChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Theme switcher
+            function initTheme() {
+                const theme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', theme);
+                updateThemeIcon(theme);
+            }
+
+            function updateThemeIcon(theme) {
+                const sunIcon = document.querySelector('.theme-toggle .sun');
+                const moonIcon = document.querySelector('.theme-toggle .moon');
+                
+                if (theme === 'light') {
+                    sunIcon.style.opacity = '1';
+                    sunIcon.style.transform = 'scale(1)';
+                    moonIcon.style.opacity = '0';
+                    moonIcon.style.transform = 'scale(0)';
+                } else {
+                    sunIcon.style.opacity = '0';
+                    sunIcon.style.transform = 'scale(0)';
+                    moonIcon.style.opacity = '1';
+                    moonIcon.style.transform = 'scale(1)';
+                }
+            }
+
+            function toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcon(newTheme);
+                updateChartsTheme(newTheme);
+            }
+
+            // Chart configurations
+            const chartColors = {
+                light: {
+                    grid: '#e0e0e0',
+                    text: '#333333',
+                    primary: 'rgb(8, 238, 207)',
+                    secondary: 'rgba(8, 238, 207, 0.5)'
+                },
+                dark: {
+                    grid: '#333333',
+                    text: '#e0e0e0',
+                    primary: 'rgb(8, 238, 207)',
+                    secondary: 'rgba(8, 238, 207, 0.5)'
+                }
+            };
+
+            // Progress Line Chart
+            const progressCtx = document.getElementById('progressChart');
+            const progressChart = new Chart(progressCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Overall Progress',
+                        data: [30, 45, 65, 80],
+                        borderColor: 'rgb(8, 238, 207)',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(8, 238, 207, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: chartColors.dark.text
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: chartColors.dark.grid
+                            },
+                            ticks: {
+                                color: chartColors.dark.text
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: chartColors.dark.grid
+                            },
+                            ticks: {
+                                color: chartColors.dark.text
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Subject Completion Pie Chart
+            const completionCtx = document.getElementById('completionChart');
+            const completionChart = new Chart(completionCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Mathematics', 'Physics', 'Chemistry', 'Biology'],
+                    datasets: [{
+                        data: [75, 60, 45, 30],
+                        backgroundColor: [
+                            'rgb(8, 238, 207)',
+                            'rgb(54, 162, 235)',
+                            'rgb(255, 99, 132)',
+                            'rgb(255, 205, 86)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: chartColors.dark.text
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Subject Performance Bar Chart
+            const performanceCtx = document.getElementById('performanceChart');
+            const performanceChart = new Chart(performanceCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mathematics', 'Physics', 'Chemistry', 'Biology'],
+                    datasets: [{
+                        label: 'Average Score (%)',
+                        data: [85, 70, 65, 75],
+                        backgroundColor: 'rgb(8, 238, 207)',
+                        borderColor: 'rgb(8, 238, 207)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: chartColors.dark.text
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: chartColors.dark.grid
+                            },
+                            ticks: {
+                                color: chartColors.dark.text
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: chartColors.dark.grid
+                            },
+                            ticks: {
+                                color: chartColors.dark.text
+                            }
+                        }
+                    }
+                }
+            });
+
+            function updateChartsTheme(theme) {
+                const colors = chartColors[theme];
+                
+                [progressChart, completionChart, performanceChart].forEach(chart => {
+                    if (chart.options.plugins.legend) {
+                        chart.options.plugins.legend.labels.color = colors.text;
+                    }
+                    
+                    if (chart.options.scales) {
+                        if (chart.options.scales.x) {
+                            chart.options.scales.x.grid.color = colors.grid;
+                            chart.options.scales.x.ticks.color = colors.text;
+                        }
+                        if (chart.options.scales.y) {
+                            chart.options.scales.y.grid.color = colors.grid;
+                            chart.options.scales.y.ticks.color = colors.text;
+                        }
+                    }
+                    
+                    chart.update();
+                });
+            }
+
+            // Initialize theme and add event listeners
+            initTheme();
+            document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+            
+            // Initialize charts with current theme
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            updateChartsTheme(currentTheme);
+
+            // Function to clear all progress
+            function clearAllProgress() {
+                if (confirm('Are you sure you want to clear all progress and history? This cannot be undone.')) {
+                    const subjects = ['math', 'physics', 'chemistry', 'biology'];
+                    const sections = ['class8', 'class9', 'class10', 'class11', 'class12', 'ssc', 'upsc', 'jee', 'neet', 'gate'];
+                    
+                    // Clear all progress data
+                    subjects.forEach(subject => {
+                        sections.forEach(section => {
+                            const progressKey = `${subject}_${section}_progress`;
+                            localStorage.removeItem(progressKey);
+                        });
+                    });
+
+                    // Clear recent results
+                    localStorage.removeItem('recentResults');
+
+                    // Reset all chart data to zero
+                    progressChart.data.datasets[0].data = [0, 0, 0, 0];
+                    completionChart.data.datasets[0].data = [0, 0, 0, 0];
+                    performanceChart.data.datasets[0].data = [0, 0, 0, 0];
+
+                    // Update all charts
+                    progressChart.update();
+                    completionChart.update();
+                    performanceChart.update();
+
+                    // Show confirmation message
+                    alert('All progress and history has been cleared successfully!');
+                }
+            }
+
+            // Add event listener for storage changes
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'recentResults' || e.key.includes('_progress')) {
+                    // Update charts when storage changes
+                    updateCharts();
+                }
+            });
+
+            // Update the existing updateCharts function
+            function updateCharts() {
+                // Get all progress data
+                const subjects = ['math', 'physics', 'chemistry', 'biology'];
+                const sections = ['class8', 'class9', 'class10', 'class11', 'class12', 'ssc', 'upsc', 'jee', 'neet', 'gate'];
+                
+                let progressData = [];
+                let completionData = [];
+                let performanceData = [];
+
+                subjects.forEach(subject => {
+                    let subjectProgress = 0;
+                    let completedSections = 0;
+                    let totalSections = 0;
+
+                    sections.forEach(section => {
+                        const progressKey = `${subject}_${section}_progress`;
+                        const progress = parseFloat(localStorage.getItem(progressKey)) || 0;
+                        
+                        if (progress > 0) {
+                            subjectProgress += progress;
+                            completedSections++;
+                        }
+                        totalSections++;
+                    });
+
+                    const averageProgress = totalSections > 0 ? subjectProgress / totalSections : 0;
+                    const completionRate = totalSections > 0 ? (completedSections / totalSections) * 100 : 0;
+
+                    progressData.push(averageProgress);
+                    completionData.push(completionRate);
+                    performanceData.push(averageProgress);
+                });
+
+                // Update Progress Over Time Chart
+                progressChart.data.datasets[0].data = progressData;
+                progressChart.data.labels = subjects;
+                progressChart.update();
+
+                // Update Subject Completion Chart
+                completionChart.data.datasets[0].data = completionData;
+                completionChart.data.labels = subjects;
+                completionChart.update();
+
+                // Update Subject Performance Chart
+                performanceChart.data.datasets[0].data = performanceData;
+                performanceChart.data.labels = subjects;
+                performanceChart.update();
+            }
+        });
+    </script>
+</body>
+</html> 
